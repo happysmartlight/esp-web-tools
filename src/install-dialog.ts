@@ -114,7 +114,7 @@ export class EwtInstallDialog extends LitElement {
       if (this._error) {
         [heading, content] = this._renderError(this._error);
       } else {
-        content = this._renderProgress("Connecting");
+        content = this._renderProgress("Đang kết nối...");
       }
     } else if (this._state === "INSTALL") {
       [heading, content, allowClosing] = this._renderInstall();
@@ -139,7 +139,12 @@ export class EwtInstallDialog extends LitElement {
         @cancel=${this._preventDefault}
         @closed=${this._handleClose}
       >
-        ${heading ? html`<div slot="headline">${heading}</div>` : ""}
+        ${heading
+          ? html`<div slot="headline" style="display:flex;align-items:center;gap:8px;">
+              <img src="/favicon-16x16.png" alt="HSL" width="20" height="20" style="flex-shrink:0;border-radius:4px;"/>
+              ${heading}
+            </div>`
+          : ""}
         ${allowClosing
           ? html`
               <ew-icon-button slot="headline" @click=${this._closeDialog}>
@@ -163,7 +168,7 @@ export class EwtInstallDialog extends LitElement {
   }
 
   _renderError(label: string): [string, TemplateResult] {
-    const heading = "Error";
+    const heading = "Lỗi";
     const content = html`
       <ewt-page-message
         slot="content"
@@ -171,7 +176,7 @@ export class EwtInstallDialog extends LitElement {
         .label=${label}
       ></ewt-page-message>
       <div slot="actions">
-        <ew-text-button @click=${this._closeDialog}>Close</ew-text-button>
+        <ew-text-button @click=${this._closeDialog}>Đóng</ew-text-button>
       </div>
     `;
     return [heading, content];
@@ -186,7 +191,7 @@ export class EwtInstallDialog extends LitElement {
       <div slot="content">
         <ew-list>
           <ew-list-item>
-            <div slot="headline">Connected to ${this._info!.name}</div>
+            <div slot="headline">Đã kết nối: ${this._info!.name}</div>
             <div slot="supporting-text">
               ${this._info!.firmware}&nbsp;${this._info!.version}
               (${this._info!.chipFamily})
@@ -209,8 +214,8 @@ export class EwtInstallDialog extends LitElement {
                   ${listItemInstallIcon}
                   <div slot="headline">
                     ${!this._isSameFirmware
-                      ? `Install ${this._manifest.name}`
-                      : `Update ${this._manifest.name}`}
+                      ? `Cài đặt ${this._manifest.name}`
+                      : `Cập nhật ${this._manifest.name}`}
                   </div>
                 </ew-list-item>
               `
@@ -224,7 +229,7 @@ export class EwtInstallDialog extends LitElement {
                   target="_blank"
                 >
                   ${listItemVisitDevice}
-                  <div slot="headline">Visit Device</div>
+                  <div slot="headline">Truy cập thiết bị</div>
                 </ew-list-item>
               `}
           ${!this._manifest.home_assistant_domain ||
@@ -237,7 +242,7 @@ export class EwtInstallDialog extends LitElement {
                   target="_blank"
                 >
                   ${listItemHomeAssistant}
-                  <div slot="headline">Add to Home Assistant</div>
+                  <div slot="headline">Thêm vào Home Assistant</div>
                 </ew-list-item>
               `}
           <ew-list-item
@@ -254,8 +259,8 @@ export class EwtInstallDialog extends LitElement {
             ${listItemWifi}
             <div slot="headline">
               ${this._client!.state === ImprovSerialCurrentState.READY
-                ? "Connect to Wi-Fi"
-                : "Change Wi-Fi"}
+                ? "Kết nối Wi-Fi"
+                : "Đổi Wi-Fi"}
             </div>
           </ew-list-item>
           <ew-list-item
@@ -272,7 +277,7 @@ export class EwtInstallDialog extends LitElement {
             }}
           >
             ${listItemConsole}
-            <div slot="headline">Logs & Console</div>
+            <div slot="headline">Nhật ký & Bảng điều khiển</div>
           </ew-list-item>
           ${this._isSameFirmware && this._manifest.funding_url
             ? html`
@@ -282,7 +287,7 @@ export class EwtInstallDialog extends LitElement {
                   target="_blank"
                 >
                   ${listItemFundDevelopment}
-                  <div slot="headline">Fund Development</div>
+                  <div slot="headline">Hỗ trợ phát triển</div>
                 </ew-list-item>
               `
             : ""}
@@ -294,7 +299,7 @@ export class EwtInstallDialog extends LitElement {
                   @click=${() => this._startInstall(true)}
                 >
                   ${listItemEraseUserData}
-                  <div slot="headline">Erase User Data</div>
+                  <div slot="headline">Xóa dữ liệu người dùng</div>
                 </ew-list-item>
               `
             : ""}
@@ -324,7 +329,7 @@ export class EwtInstallDialog extends LitElement {
             }}
           >
             ${listItemInstallIcon}
-            <div slot="headline">${`Install ${this._manifest.name}`}</div>
+            <div slot="headline">${`Cài đặt ${this._manifest.name}`}</div>
           </ew-list-item>
           <ew-list-item
             type="button"
@@ -335,7 +340,7 @@ export class EwtInstallDialog extends LitElement {
             }}
           >
             ${listItemConsole}
-            <div slot="headline">Logs & Console</div>
+            <div slot="headline">Nhật ký & Bảng điều khiển</div>
           </ew-list-item>
         </ew-list>
       </div>
@@ -345,7 +350,7 @@ export class EwtInstallDialog extends LitElement {
   }
 
   _renderProvision(): [string | undefined, TemplateResult] {
-    let heading: string | undefined = "Configure Wi-Fi";
+    let heading: string | undefined = "Cài đặt Wi-Fi";
     let content: TemplateResult;
 
     if (this._busy) {
@@ -353,8 +358,8 @@ export class EwtInstallDialog extends LitElement {
         heading,
         this._renderProgress(
           this._ssids === undefined
-            ? "Scanning for networks"
-            : "Trying to connect",
+            ? "Đang tìm mạng Wi-Fi..."
+            : "Đang kết nối...",
         ),
       ];
     }
@@ -372,7 +377,7 @@ export class EwtInstallDialog extends LitElement {
         <div slot="content">
           <ewt-page-message
             .icon=${OK_ICON}
-            label="Device connected to the network!"
+            label="Thiết bị đã kết nối mạng thành công!"
           ></ewt-page-message>
           ${showSetupLinks
             ? html`
@@ -389,7 +394,7 @@ export class EwtInstallDialog extends LitElement {
                           }}
                         >
                           ${listItemVisitDevice}
-                          <div slot="headline">Visit Device</div>
+                          <div slot="headline">Truy cập thiết bị</div>
                         </ew-list-item>
                       `}
                   ${!this._manifest.home_assistant_domain
@@ -404,7 +409,7 @@ export class EwtInstallDialog extends LitElement {
                           }}
                         >
                           ${listItemHomeAssistant}
-                          <div slot="headline">Add to Home Assistant</div>
+                          <div slot="headline">Thêm vào Home Assistant</div>
                         </ew-list-item>
                       `}
                   <ew-list-item
@@ -414,7 +419,7 @@ export class EwtInstallDialog extends LitElement {
                     }}
                   >
                     <div slot="start" class="fake-icon"></div>
-                    <div slot="headline">Skip</div>
+                    <div slot="headline">Bỏ qua</div>
                   </ew-list-item>
                 </ew-list>
               `
@@ -429,7 +434,7 @@ export class EwtInstallDialog extends LitElement {
                     this._state = "DASHBOARD";
                   }}
                 >
-                  Continue
+                  Tiếp tục
                 </ew-text-button>
               </div>
             `
@@ -440,11 +445,11 @@ export class EwtInstallDialog extends LitElement {
 
       switch (this._client!.error) {
         case ImprovSerialErrorState.UNABLE_TO_CONNECT:
-          error = "Unable to connect";
+          error = "Không thể kết nối";
           break;
 
         case ImprovSerialErrorState.TIMEOUT:
-          error = "Timeout";
+          error = "Hết thời gian chờ";
           break;
 
         case ImprovSerialErrorState.NO_ERROR:
@@ -453,7 +458,7 @@ export class EwtInstallDialog extends LitElement {
           break;
 
         default:
-          error = `Unknown error (${this._client!.error})`;
+          error = `Lỗi không xác định (${this._client!.error})`;
       }
       const selectedSsid = this._ssids?.find(
         (info) => info.name === this._selectedSsid,
@@ -463,13 +468,13 @@ export class EwtInstallDialog extends LitElement {
           ${refreshIcon}
         </ew-icon-button>
         <div slot="content">
-          <div>Connect your device to the network to start using it.</div>
+          <div>Kết nối thiết bị với mạng Wi-Fi để bắt đầu sử dụng.</div>
           ${error ? html`<p class="error">${error}</p>` : ""}
           ${this._ssids !== null
             ? html`
                 <ew-filled-select
                   menu-positioning="fixed"
-                  label="Network"
+                  label="Tên mạng Wi-Fi"
                   @change=${(ev: { target: EwFilledSelect }) => {
                     const index = ev.target.selectedIndex;
                     // The "Join Other" item is always the last item.
@@ -491,7 +496,7 @@ export class EwtInstallDialog extends LitElement {
                   )}
                   <ew-divider></ew-divider>
                   <ew-select-option .selected=${!selectedSsid}>
-                    Join other…
+                    Mạng khác…
                   </ew-select-option>
                 </ew-filled-select>
               `
@@ -501,7 +506,7 @@ export class EwtInstallDialog extends LitElement {
             !selectedSsid
               ? html`
                   <ew-filled-text-field
-                    label="Network Name"
+                    label="Tên mạng"
                     name="ssid"
                   ></ew-filled-text-field>
                 `
@@ -510,7 +515,7 @@ export class EwtInstallDialog extends LitElement {
           ${!selectedSsid || selectedSsid.secured
             ? html`
                 <ew-filled-text-field
-                  label="Password"
+                  label="Mật khẩu"
                   name="password"
                   type="password"
                 ></ew-filled-text-field>
@@ -523,9 +528,9 @@ export class EwtInstallDialog extends LitElement {
               this._state = "DASHBOARD";
             }}
           >
-            ${this._installState && this._installErase ? "Skip" : "Back"}
+            ${this._installState && this._installErase ? "Bỏ qua" : "Quay lại"}
           </ew-text-button>
-          <ew-text-button @click=${this._doProvision}>Connect</ew-text-button>
+          <ew-text-button @click=${this._doProvision}>Kết nối</ew-text-button>
         </div>
       `;
     }
@@ -533,16 +538,16 @@ export class EwtInstallDialog extends LitElement {
   }
 
   _renderAskErase(): [string | undefined, TemplateResult] {
-    const heading = "Erase device";
+    const heading = "Xóa thiết bị";
     const content = html`
       <div slot="content">
         <div>
-          Do you want to erase the device before installing
-          ${this._manifest.name}? All data on the device will be lost.
+          Bạn có muốn xóa toàn bộ dữ liệu trước khi cài đặt
+          ${this._manifest.name}? Tất cả dữ liệu trên thiết bị sẽ bị mất.
         </div>
         <label class="formfield">
           <ew-checkbox touch-target="wrapper" class="danger"></ew-checkbox>
-          Erase device
+          Xóa thiết bị
         </label>
       </div>
       <div slot="actions">
@@ -551,7 +556,7 @@ export class EwtInstallDialog extends LitElement {
             this._state = "DASHBOARD";
           }}
         >
-          Back
+          Quay lại
         </ew-text-button>
         <ew-text-button
           @click=${() => {
@@ -559,7 +564,7 @@ export class EwtInstallDialog extends LitElement {
             this._startInstall(checkbox.checked);
           }}
         >
-          Next
+          Tiếp tục
         </ew-text-button>
       </div>
     `;
@@ -575,31 +580,30 @@ export class EwtInstallDialog extends LitElement {
     const isUpdate = !this._installErase && this._isSameFirmware;
 
     if (!this._installConfirmed && this._isSameVersion) {
-      heading = "Erase User Data";
+      heading = "Xóa dữ liệu người dùng";
       content = html`
         <div slot="content">
-          Do you want to reset your device and erase all user data from your
-          device?
+          Bạn có chắc muốn đặt lại thiết bị và xóa toàn bộ dữ liệu người dùng?
         </div>
         <div slot="actions">
           <ew-text-button class="danger" @click=${this._confirmInstall}>
-            Erase User Data
+            Xóa dữ liệu
           </ew-text-button>
         </div>
       `;
     } else if (!this._installConfirmed) {
-      heading = "Confirm Installation";
-      const action = isUpdate ? "update to" : "install";
+      heading = "Xác nhận cài đặt";
+      const action = isUpdate ? "cập nhật lên" : "cài đặt";
       content = html`
         <div slot="content">
           ${isUpdate
-            ? html`Your device is running
+            ? html`Thiết bị đang chạy
                 ${this._info!.firmware}&nbsp;${this._info!.version}.<br /><br />`
             : ""}
-          Do you want to ${action}
+          Bạn có muốn ${action}
           ${this._manifest.name}&nbsp;${this._manifest.version}?
           ${this._installErase
-            ? html`<br /><br />All data on the device will be erased.`
+            ? html`<br /><br />Toàn bộ dữ liệu trên thiết bị sẽ bị xóa.`
             : ""}
         </div>
         <div slot="actions">
@@ -608,10 +612,10 @@ export class EwtInstallDialog extends LitElement {
               this._state = "DASHBOARD";
             }}
           >
-            Back
+            Quay lại
           </ew-text-button>
           <ew-text-button @click=${this._confirmInstall}>
-            Install
+            Cài đặt
           </ew-text-button>
         </div>
       `;
@@ -620,11 +624,11 @@ export class EwtInstallDialog extends LitElement {
       this._installState.state === FlashStateType.INITIALIZING ||
       this._installState.state === FlashStateType.PREPARING
     ) {
-      heading = "Installing";
-      content = this._renderProgress("Preparing installation");
+      heading = "Đang cài đặt";
+      content = this._renderProgress("Đang chuẩn bị...");
     } else if (this._installState.state === FlashStateType.ERASING) {
-      heading = "Installing";
-      content = this._renderProgress("Erasing");
+      heading = "Đang cài đặt";
+      content = this._renderProgress("Đang xóa flash...");
     } else if (
       this._installState.state === FlashStateType.WRITING ||
       // When we're finished, keep showing this screen with 100% written
@@ -632,15 +636,15 @@ export class EwtInstallDialog extends LitElement {
       (this._installState.state === FlashStateType.FINISHED &&
         this._client === undefined)
     ) {
-      heading = "Installing";
+      heading = "Đang cài đặt";
       let percentage: number | undefined;
       let undeterminateLabel: string | undefined;
       if (this._installState.state === FlashStateType.FINISHED) {
         // We're done writing and detecting improv, show spinner
-        undeterminateLabel = "Wrapping up";
+        undeterminateLabel = "Đang hoàn tất...";
       } else if (this._installState.details.percentage < 4) {
         // We're writing the firmware under 4%, show spinner or else we don't show any pixels
-        undeterminateLabel = "Installing";
+        undeterminateLabel = "Đang ghi firmware...";
       } else {
         // We're writing the firmware over 4%, show progress bar
         percentage = this._installState.details.percentage;
@@ -649,11 +653,11 @@ export class EwtInstallDialog extends LitElement {
         html`
           ${undeterminateLabel ? html`${undeterminateLabel}<br />` : ""}
           <br />
-          This will take
+          Quá trình này mất khoảng
           ${this._installState.chipFamily === "ESP8266"
-            ? "a minute"
-            : "2 minutes"}.<br />
-          Keep this page visible to prevent slow down
+            ? "1 phút"
+            : "2 phút"}.<br />
+          Vui lòng giữ trang này mở để tránh bị chậm
         `,
         percentage,
       );
@@ -664,7 +668,7 @@ export class EwtInstallDialog extends LitElement {
         <ewt-page-message
           slot="content"
           .icon=${OK_ICON}
-          label="Installation complete!"
+          label="Cài đặt hoàn tất!"
         ></ewt-page-message>
 
         <div slot="actions">
@@ -676,12 +680,12 @@ export class EwtInstallDialog extends LitElement {
                   : "DASHBOARD";
             }}
           >
-            Next
+            Tiếp theo
           </ew-text-button>
         </div>
       `;
     } else if (this._installState.state === FlashStateType.ERROR) {
-      heading = "Installation failed";
+      heading = "Cài đặt thất bại";
       content = html`
         <ewt-page-message
           slot="content"
@@ -695,7 +699,7 @@ export class EwtInstallDialog extends LitElement {
               this._state = "DASHBOARD";
             }}
           >
-            Back
+            Quay lại
           </ew-text-button>
         </div>
       `;
@@ -704,7 +708,7 @@ export class EwtInstallDialog extends LitElement {
   }
 
   _renderLogs(): [string | undefined, TemplateResult] {
-    let heading: string | undefined = `Logs`;
+    let heading: string | undefined = `Nhật ký`;
     let content: TemplateResult;
 
     content = html`
@@ -717,7 +721,7 @@ export class EwtInstallDialog extends LitElement {
             await this.shadowRoot!.querySelector("ewt-console")!.reset();
           }}
         >
-          Reset Device
+          Khởi động lại
         </ew-text-button>
         <ew-text-button
           @click=${() => {
@@ -729,7 +733,7 @@ export class EwtInstallDialog extends LitElement {
             this.shadowRoot!.querySelector("ewt-console")!.reset();
           }}
         >
-          Download Logs
+          Tải nhật ký
         </ew-text-button>
         <ew-text-button
           @click=${async () => {
@@ -738,7 +742,7 @@ export class EwtInstallDialog extends LitElement {
             this._initialize();
           }}
         >
-          Back
+          Quay lại
         </ew-text-button>
       </div>
     `;
@@ -853,7 +857,7 @@ export class EwtInstallDialog extends LitElement {
     if (this.port.readable === null || this.port.writable === null) {
       this._state = "ERROR";
       this._error =
-        "Serial port is not readable/writable. Close any other application using it and try again.";
+        "Cổng serial không thể đọc/ghi. Vui lòng đóng ứng dụng khác đang dùng cổng này và thử lại.";
       return;
     }
 
@@ -861,7 +865,7 @@ export class EwtInstallDialog extends LitElement {
       this._manifest = await downloadManifest(this.manifestPath);
     } catch (err: any) {
       this._state = "ERROR";
-      this._error = "Failed to download manifest";
+      this._error = "Không tải được manifest firmware";
       return;
     }
 
@@ -892,7 +896,7 @@ export class EwtInstallDialog extends LitElement {
       if (err instanceof PortNotReady) {
         this._state = "ERROR";
         this._error =
-          "Serial port is not ready. Close any other application using it and try again.";
+          "Cổng serial chưa sẵn sàng. Vui lòng đóng ứng dụng khác đang dùng cổng này và thử lại.";
       } else {
         this._client = null; // not supported
         this.logger.error("Improv initialization failed.", err);
@@ -969,7 +973,7 @@ export class EwtInstallDialog extends LitElement {
 
   private _handleDisconnect = () => {
     this._state = "ERROR";
-    this._error = "Disconnected";
+    this._error = "Đã mất kết nối với thiết bị";
   };
 
   private _closeDialog() {
