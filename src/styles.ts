@@ -6,23 +6,34 @@ import { css } from "lit";
 
 export const dialogStyles = css`
   :host {
-    --roboto-font: Roboto, system-ui;
-    --text-color: rgba(0, 0, 0, 0.6);
-    --danger-color: #db4437;
+    --hsl-font: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --text-color: rgba(255, 255, 255, 0.87);
+    --danger-color: #ff5252;
 
-    --md-sys-color-primary: #03a9f4;
-    --md-sys-color-on-primary: #fff;
-    --md-ref-typeface-brand: var(--roboto-font);
-    --md-ref-typeface-plain: var(--roboto-font);
+    /* HSL accent: cyan gradient → single token */
+    --md-sys-color-primary: #00d3ff;
+    --md-sys-color-on-primary: #001a22;
 
-    --md-sys-color-surface: #fff;
-    --md-sys-color-surface-container: #fff;
-    --md-sys-color-surface-container-high: #fff;
-    --md-sys-color-surface-container-highest: #f5f5f5;
-    --md-sys-color-secondary-container: #e0e0e0;
+    --md-ref-typeface-brand: var(--hsl-font);
+    --md-ref-typeface-plain: var(--hsl-font);
 
-    --md-sys-typescale-headline-font: var(--roboto-font);
-    --md-sys-typescale-title-font: var(--roboto-font);
+    /* Dialog surfaces — dark theme */
+    --md-sys-color-surface: #1a1a2e;
+    --md-sys-color-surface-container: #1a1a2e;
+    --md-sys-color-surface-container-high: #22223a;
+    --md-sys-color-surface-container-highest: #2a2a42;
+    --md-sys-color-secondary-container: #2a2a42;
+
+    /* Text on surfaces */
+    --md-sys-color-on-surface: rgba(255, 255, 255, 0.87);
+    --md-sys-color-on-surface-variant: rgba(255, 255, 255, 0.55);
+    --md-sys-color-outline: rgba(255, 255, 255, 0.15);
+    --md-sys-color-outline-variant: rgba(255, 255, 255, 0.08);
+
+    --md-sys-typescale-headline-font: var(--hsl-font);
+    --md-sys-typescale-title-font: var(--hsl-font);
+    --md-sys-typescale-body-font: var(--hsl-font);
+    --md-sys-typescale-label-font: var(--hsl-font);
   }
 
   a {

@@ -1026,6 +1026,11 @@ export class EwtInstallDialog extends LitElement {
       }
       div[slot="headline"] {
         padding-right: 48px;
+        font-weight: 700;
+        background: linear-gradient(90deg, #00d3ff, #f00ac0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       ew-icon-button[slot="headline"] {
         position: absolute;
@@ -1034,10 +1039,13 @@ export class EwtInstallDialog extends LitElement {
       }
       ew-icon-button[slot="headline"] svg {
         padding: 8px;
-        color: var(--text-color);
+        color: rgba(255,255,255,0.6);
+      }
+      ew-icon-button[slot="headline"]:hover svg {
+        color: #00d3ff;
       }
       .dialog-nav svg {
-        color: var(--text-color);
+        color: rgba(255,255,255,0.6);
       }
       .table-row {
         display: flex;
